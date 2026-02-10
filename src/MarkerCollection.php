@@ -152,12 +152,22 @@ class MarkerCollection implements GeometryInterface, Renderable, Countable, Iter
 
     public function toLivewire(): array
     {
-        return $this->toArray();
+        return [
+            'markers' => array_map(
+                fn(Marker $marker) => $marker->toLivewire(),
+                $this->markers
+            ),
+        ];
     }
 
     public static function fromLivewire($value): self
     {
-        return new self(array_map(fn($marker) => Marker::fromLivewire($marker), $value['markers']));
+        $markers = array_map(
+            fn(array $markerData) => Marker::fromLivewire($markerData),
+            $value['markers'] ?? []
+        );
+
+        return new self($markers);
     }
 
     // Renderable
