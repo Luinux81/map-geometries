@@ -167,17 +167,48 @@ class Marker implements GeometryInterface, HasCoordinates, Renderable, Wireable
 
     public function toLivewire(): array
     {
-        return $this->toArray();
+        return [
+            'latitude' => $this->latitude,
+            'longitude' => $this->longitude,
+            'label' => $this->label,
+            'tooltip' => $this->tooltip,
+            'icon' => $this->icon,
+            'iconColor' => $this->iconColor,
+            'options' => $this->options,
+            'metadata' => $this->metadata,
+        ];
     }
 
     public static function fromLivewire($value): self
     {
-        return self::make($value['latitude'], $value['longitude'], $value['label'])
-            ->tooltip($value['tooltip'])
-            ->icon($value['icon'])
-            ->iconColor($value['iconColor'])
-            ->options($value['options'])
-            ->metadata($value['metadata']);
+        $marker = self::make(
+            $value['latitude'],
+            $value['longitude'],
+            $value['label'] ?? null
+        );
+
+        // Solo aplicar si no es null
+        if ($value['tooltip'] ?? null) {
+            $marker->tooltip($value['tooltip']);
+        }
+
+        if ($value['icon'] ?? null) {
+            $marker->icon($value['icon']);
+        }
+
+        if ($value['iconColor'] ?? null) {
+            $marker->iconColor($value['iconColor']);
+        }
+
+        if (!empty($value['options'])) {
+            $marker->options($value['options']);
+        }
+
+        if (!empty($value['metadata'])) {
+            $marker->metadata($value['metadata']);
+        }
+
+        return $marker;
     }
 
     public function render(): array
