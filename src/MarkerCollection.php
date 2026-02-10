@@ -7,8 +7,9 @@ use Countable;
 use Iterator;
 use LBCDev\MapGeometries\Contracts\GeometryInterface;
 use LBCDev\MapGeometries\Contracts\Renderable;
+use Livewire\Wireable;
 
-class MarkerCollection implements GeometryInterface, Renderable, Countable, Iterator, ArrayAccess
+class MarkerCollection implements GeometryInterface, Renderable, Countable, Iterator, ArrayAccess, Wireable
 {
     /** @var Marker[] */
     protected array $markers = [];
@@ -140,7 +141,7 @@ class MarkerCollection implements GeometryInterface, Renderable, Countable, Iter
         return [
             'type' => $this->getType(),
             'count' => $this->count(),
-            'markers' => array_map(fn (Marker $marker) => $marker->toArray(), $this->markers),
+            'markers' => array_map(fn(Marker $marker) => $marker->toArray(), $this->markers),
         ];
     }
 
@@ -149,10 +150,19 @@ class MarkerCollection implements GeometryInterface, Renderable, Countable, Iter
         return json_encode($this->toArray());
     }
 
+    public function toLivewire(): array
+    {
+        return $this->toArray();
+    }
+
+    public static function fromLivewire($value): self
+    {
+        return new self(array_map(fn($marker) => Marker::fromLivewire($marker), $value['markers']));
+    }
+
     // Renderable
     public function render(): array
     {
-        return array_map(fn (Marker $marker) => $marker->render(), $this->markers);
+        return array_map(fn(Marker $marker) => $marker->render(), $this->markers);
     }
 }
-

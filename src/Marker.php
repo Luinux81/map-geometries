@@ -5,8 +5,9 @@ namespace LBCDev\MapGeometries;
 use LBCDev\MapGeometries\Contracts\GeometryInterface;
 use LBCDev\MapGeometries\Contracts\HasCoordinates;
 use LBCDev\MapGeometries\Contracts\Renderable;
+use Livewire\Wireable;
 
-class Marker implements GeometryInterface, HasCoordinates, Renderable
+class Marker implements GeometryInterface, HasCoordinates, Renderable, Wireable
 {
     protected float $latitude;
 
@@ -162,6 +163,21 @@ class Marker implements GeometryInterface, HasCoordinates, Renderable
     public function toJson(): string
     {
         return json_encode($this->toArray());
+    }
+
+    public function toLivewire(): array
+    {
+        return $this->toArray();
+    }
+
+    public static function fromLivewire($value): self
+    {
+        return self::make($value['latitude'], $value['longitude'], $value['label'])
+            ->tooltip($value['tooltip'])
+            ->icon($value['icon'])
+            ->iconColor($value['iconColor'])
+            ->options($value['options'])
+            ->metadata($value['metadata']);
     }
 
     public function render(): array
